@@ -6,8 +6,8 @@
  edited by: 03/2021
 */
 
-#ifndef FASTCKY_BEAMCKYPAR_H
-#define FASTCKY_BEAMCKYPAR_H
+#ifndef LINEARFOLD_H
+#define LINEARFOLD_H
 
 #include <string>
 #include <limits>
@@ -118,6 +118,7 @@ public:
     double m = 1.8;
     double b = -0.6;
     bool is_fasta = false;
+    int dangle_model;
 
     struct DecoderResult {
         std::string structure;
@@ -133,7 +134,8 @@ public:
                   bool zuker_subopt=false,
                   float zuker_energy_delta=5.0,
                   std::string shape_file_path="",
-                  bool is_fasta=false); // lisiz, add constraints
+                  bool is_fasta=false,
+                  int dangle_model=2); // lisiz, add constraints
 
     DecoderResult parse(std::string& seq, std::vector<int>* cons);
     void outside(std::vector<int> next_pair[]); //for zuker subopt
@@ -206,4 +208,4 @@ private:
     std::vector<std::pair<value_type, int>> scores;
 };
 
-#endif //FASTCKY_BEAMCKYPAR_H
+#endif //LINEARFOLD_H

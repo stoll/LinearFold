@@ -6,17 +6,20 @@
  edited by: 12/2018
 */
 
+#ifndef LINEARFOLDEVAL_H
+#define LINEARFOLDEVAL_H
+
 #include <stack>
 #include <string>
 #include <vector>
 
 #include "LinearFold.h"
+
 #include "Utils/utility_v.h"
-#include "Utils/utility.h"
 
 using namespace std;
 
-long eval(string seq, string ref, bool is_verbose) {
+long eval(string seq, string ref, bool is_verbose, int dangle_model) {
 
     int seq_length = seq.length();
 
@@ -30,7 +33,7 @@ long eval(string seq, string ref, bool is_verbose) {
     eval_nucs.clear();
     eval_nucs.resize(seq_length);
     for (int i = 0; i < seq_length; ++i) {
-        eval_nucs[i] = GET_ACGU_NUM(seq[i]);
+      eval_nucs[i] = GET_ACGU_NUM_V(seq[i]); // lhuang: explicitly use Vienna coding (not very nice)
     }
 
     long total_energy = 0;
@@ -101,7 +104,7 @@ long eval(string seq, string ref, bool is_verbose) {
             else { //multi
                 int multi_score = 0;
                 multi_score += M1_energy[i];
-                multi_score += - v_score_multi(i, j, nuci, nuci1, nucj_1, nucj, seq_length);
+                multi_score += - v_score_multi(i, j, nuci, nuci1, nucj_1, nucj, seq_length, dangle_model);
                 multi_score += - v_score_multi_unpaired(i+1, i + multi_number_unpaired[i]); // current model is 0
                 if (is_verbose)
                     printf("Multi loop ( %d, %d) %c%c : %.2f\n", i+1, j+1, seq[i], seq[j], multi_score / -100.0);
@@ -113,7 +116,7 @@ long eval(string seq, string ref, bool is_verbose) {
 
             // possible M
             if (!stk.empty())
-                M1_energy[stk.top().first] += - v_score_M1(i, j, j, nuci_1, nuci, nucj, nucj1, seq_length);
+                M1_energy[stk.top().first] += - v_score_M1(i, j, j, nuci_1, nuci, nucj, nucj1, seq_length, dangle_model);
 
             // check if adding external energy
             if (stk.empty()) {
@@ -121,7 +124,7 @@ long eval(string seq, string ref, bool is_verbose) {
                 int nuck = k > -1 ? eval_nucs[k] : -1;
                 int nuck1 = eval_nucs[k+1];
                 external_energy +=  - v_score_external_paired(k+1, j, nuck, nuck1,
-                                                            nucj, nucj1, seq_length);
+                                                            nucj, nucj1, seq_length, dangle_model);
                 // external_energy += 0; currently external unpaired is 0
             }
         }
@@ -132,3 +135,5 @@ long eval(string seq, string ref, bool is_verbose) {
     total_energy += external_energy;
     return total_energy;
 }
+
+#endif // LINEARFOLDEVAL_H

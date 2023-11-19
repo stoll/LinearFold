@@ -18,7 +18,7 @@ Web server: http://linearfold.org
 
 ## Dependencies
 GCC 4.8.5 or above; 
-python2.7
+python3
 
 ## To Compile
 ```
@@ -85,6 +85,13 @@ compute Zuker suboptimal structures with scores or energies(-V, kcal/mol) in a c
 use SHAPE reactivity data to guide structure predictions  
 Please refer to this link for the SHAPE data format:
 https://rna.urmc.rochester.edu/Text/File_Formats.html#SHAPE
+
+```
+--dangles INT or -d INT
+```
+the way to treat "dangling end" energies for bases adjacent to helices in free ends and multi-loops, (only supporting 0 or 2, DEFAULT=2)  
+--dangles 0, ignores dangling ends  
+--dangles 2, dangling energies are added for the bases adjacent to a helix on both sides in any case
 
 
 ## To Visualize 
@@ -163,6 +170,12 @@ GCCUGGUGACCAUAGCGAGUCGGUACCACCCCUUCCCAUCCCGAACAGGACCGUGAAACGACUCCGCGCCGAUGAUAGUG
 ((((((........((((((((.(((............(((......)))..)))...))))).)))..(((((((..(((...(((......))).))).))))))))))))) (-66.30)
 ```
 
+## Example Run Predict (-d0 option: ignoring dangling ends)
+```
+echo GGGCUCGUAGAUCAGCGGUAGAUCGCUUCCUUCGCAAGGAAGCCCUGGGUUCAAAUCCCAGCGAGUCCACCA | ./linearfold -V -d0
+GGGCUCGUAGAUCAGCGGUAGAUCGCUUCCUUCGCAAGGAAGCCCUGGGUUCAAAUCCCAGCGAGUCCACCA
+(((((((..((((.......))))((((((((...)))))))).(((((.......)))))))))))).... (-25.50)
+```
 
 ## Example Run Eval
 ```
